@@ -16,18 +16,22 @@ void init (void)
 /*  initialize viewing values  */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glEnable(GL_DEPTH_TEST);
+// Accept fragment if it closer to the camera than the former one
+glDepthFunc(GL_LESS);
     //glOrtho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
     gluPerspective(90.0, 1.0, 1.0, 100.0);
 
-    posCameraX = 0.3;
-   posCameraY = 0.1;
-   posCameraZ = 0;
+    posCameraX = 2.0;
+   posCameraY = 1.0;
+   posCameraZ = 2.0;
 }
 
 void specialKeys(int key, int x, int y)
 {
-   float angulo = 2*M_PI/20;
-   cout << posCameraX << endl;
+   float angulo = 2*M_PI/180;
+   cout << "X " << posCameraX << endl;
+   cout << "Z " << posCameraZ << endl;
    switch (key) {
        case GLUT_KEY_LEFT : 
             posCameraX =  posCameraX*cos(-angulo) + posCameraZ*sin(-angulo);
@@ -39,7 +43,6 @@ void specialKeys(int key, int x, int y)
             break;
         case GLUT_KEY_UP:
           break;
-
    }
    glutPostRedisplay();
 }
@@ -49,9 +52,9 @@ void display(void)
 	
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-   gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   gluLookAt(posCameraX, posCameraY, posCameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     //glRotatef(180, 0.0f, 1.0f, 0.0f); 
-    glRotatef(angle, 0.0f, 1.0f, 0.0f); 
+   // glRotatef(angle, 0.0f, 1.0f, 0.0f); 
     
     
 /*  clear all pixels  */
@@ -149,15 +152,15 @@ void display(void)
        
     glEnd();
 
-    angle += 0.5;
-    cout << angle << endl;
+    //angle += 0.5;
+    //cout << angle << endl;
     glutSwapBuffers();
 }
 
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize (500, 500); 
     glutInitWindowPosition (100, 100);
     glutCreateWindow ("hello");
