@@ -8,8 +8,33 @@
 #include <cmath>
 using namespace std;
 
-float posCameraX,posCameraY,posCameraZ;
 float angle = 0.0;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} vec3f;
+
+vec3f pos;
+
+vec3f toPolar(vec3f vec)
+{
+    vec3f p;
+    p.x = sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
+    p.y = atan(p.y / p.x);
+    p.z = atan(sqrt(pow(vec.x, 2) + pow(vec.y, 2))/ vec.z);
+    return p;
+}
+
+vec3f toCartesian(vec3f vec)
+{
+    vec3f c;
+    c.x = vec.x * sin(vec.z) * cos(vec.y);
+    c.y = vec.x * sin(vec.z) * sin(vec.y);
+    c.z = vec.x * cos(vec.z);
+    return c;
+}
 
 void init (void) 
 {
@@ -27,34 +52,36 @@ void init (void)
     glShadeModel(GL_SMOOTH);
     //glOrtho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
     gluPerspective(45.0, 1000/700, 1.0, 5000.0);
-
-    posCameraX = 0.0;
-   posCameraY = 2.0;
-   posCameraZ = 0.1;
+    vec3f c;
+    c.x = 0;
+    c.y = 2;
+    c.z = 0.1;
+    pos = c;
+    
 }
 
 void specialKeys(int key, int x, int y)
 {
-   float angulo = 2*M_PI/180;
-   cout << "X " << posCameraX << endl;
-   cout << "Z " << posCameraZ << endl;
+   angle += M_PI/4; 
+   vec3f c;
    switch (key) {
        case GLUT_KEY_LEFT : 
-            posCameraX =  posCameraX*cos(-angulo) + posCameraZ*sin(-angulo);
-            posCameraZ = -posCameraX*sin(-angulo) + posCameraZ*cos(-angulo);
+            pos.x = 2 * sin(angle);
+            pos.z = 2 * cos(angle);
             break;
        case GLUT_KEY_RIGHT : 
-            posCameraX =  posCameraX*cos(angulo) + posCameraZ*sin(angulo);
-            posCameraZ = -posCameraX*sin(angulo) + posCameraZ*cos(angulo);                      
             break;
         case GLUT_KEY_UP:
-          posCameraY -= 0.1;
-          break;
-
+            break;
         case GLUT_KEY_DOWN:
-          posCameraY += 0.1;
+            break;
    }
    glutPostRedisplay();
+}
+
+void keyFunc(unsigned char key, int x, int y)
+{
+
 }
 
 void display(void)
@@ -62,7 +89,7 @@ void display(void)
 	
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-   gluLookAt(posCameraX, posCameraY, posCameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   gluLookAt(pos.x, pos.y, pos.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     //glRotatef(180, 0.0f, 1.0f, 0.0f); 
    // glRotatef(angle, 0.0f, 1.0f, 0.0f); 
 
@@ -76,12 +103,12 @@ void display(void)
    };
 
    float colors[] = {
-        1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
-        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-        1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
+        97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255
    };
     
     
@@ -112,6 +139,7 @@ int main(int argc, char *argv[])
     init ();
     glutDisplayFunc(display); 
     glutSpecialFunc(specialKeys);
+    glutKeyboardFunc(keyFunc);
     glutIdleFunc(display);
     glutMainLoop();
     return 0;
