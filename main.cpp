@@ -12,19 +12,22 @@ void init (void)
 {
 /*  select clearing (background) color       */
     glClearColor (0.0, 0.0, 0.0, 0.0);
+	
 
 /*  initialize viewing values  */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 // Accept fragment if it closer to the camera than the former one
-glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LESS);
+    glShadeModel(GL_SMOOTH);
     //glOrtho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
-    gluPerspective(90.0, 1.0, 1.0, 100.0);
+    gluPerspective(45.0, 1000/700, 1.0, 5000.0);
 
-    posCameraX = 2.0;
-   posCameraY = 1.0;
-   posCameraZ = 2.0;
+    posCameraX = 0.0;
+   posCameraY = 2.0;
+   posCameraZ = 0.1;
 }
 
 void specialKeys(int key, int x, int y)
@@ -42,7 +45,11 @@ void specialKeys(int key, int x, int y)
             posCameraZ = -posCameraX*sin(angulo) + posCameraZ*cos(angulo);                      
             break;
         case GLUT_KEY_UP:
+          posCameraY -= 0.1;
           break;
+
+        case GLUT_KEY_DOWN:
+          posCameraY += 0.1;
    }
    glutPostRedisplay();
 }
@@ -55,104 +62,39 @@ void display(void)
    gluLookAt(posCameraX, posCameraY, posCameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     //glRotatef(180, 0.0f, 1.0f, 0.0f); 
    // glRotatef(angle, 0.0f, 1.0f, 0.0f); 
+
+   float vertexes[] = {
+        0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1,
+        1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1,
+        0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0,
+        0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0,
+        0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1
+   };
+
+   float colors[] = {
+        1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
+        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+        1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0
+   };
     
     
 /*  clear all pixels  */
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-/*  draw polygon (rectangle) with corners at
- *  (0.25, 0.25, 0.0) and (0.75, 0.75, 0.0)  
- */
-    glBegin(GL_TRIANGLE_STRIP);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glColorPointer(3, GL_FLOAT, 0, colors);
+    glVertexPointer(3, GL_FLOAT, 0, vertexes);
+    glPushMatrix();
+    glTranslatef(-0.5, -0.5, -0.5);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 24);
 
-     /// FRONT
-        glColor3f (1.0, 1.0, 0.0);
-        glVertex3f(0.0, 0.0, 0.0);
-        
-        glColor3f (1.0, 1.0, 0.0);
-        glVertex3f(5.0, 0.0, 0.0);
-
-        glColor3f (1.0, 1.0, 0.0);
-        glVertex3f(0.0, 5.0, 0.0);
-
-        glColor3f (1.0, 1.0, 0.0);
-        glVertex3f(5.0, 5.0, 0.0);
-
-
-///RIGHT
-       	glColor3f (0.0, 1.0, 0.0);
-        glVertex3f(5.0, 0.0, 0.0);
-
-		glColor3f (0.0, 1.0, 0.0);
-        glVertex3f(5.0, 0.0, 5.0);
-
-        glColor3f (0.0, 1.0, 0.0);
-        glVertex3f(5.0, 5.0, 0.0);
-
-        glColor3f (0.0, 1.0, 0.0);
-        glVertex3f(5.0, 5.0, 5.0);
-
-
-    /// BACK
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(5.0, 0.0, 5.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(0.0, 0.0, 5.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(5.0, 5.0, 5.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(0.0, 5.0, 5.0);
-
-
-// LEFT
-
-        glColor3f (0.0, 0.0, 1.0);
-        glVertex3f(0.0, 0.0, 5.0);
-
-        glColor3f (0.0, 0.0, 1.0);
-        glVertex3f(0.0, 0.0, 0.0);
-
-        glColor3f (0.0, 0.0, 1.0);
-        glVertex3f(0.0, 5.0, 5.0);
-
-        glColor3f (0.0, 0.0, 1.0);
-        glVertex3f(0.0, 5.0, 0.0);
-
-
-/// BOTTOM
-
-        glColor3f (1.0, 1.0, 0.0);
-        glVertex3f(0.0, 0.0, 5.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(5.0, 0.0, 5.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(0.0, 0.0, 0.0);
-
-        glColor3f (1.0, 1.0, 1.0);
-        glVertex3f(5.0, 0.0, 0.0);
-
-/// TOP
-
-        glColor3f (1.0, 0.0, 0.0);
-        glVertex3f(0.0, 5.0, 0.0);
-
-        glColor3f (1.0, 0.0, 0.0);
-        glVertex3f(5.0, 5.0, 0.0);
-
-        glColor3f (1.0, 0.0, 0.0);
-        glVertex3f(0.0, 5.0, 5.0);
-
-        glColor3f (1.0, 0.0, 0.0);
-        glVertex3f(5.0, 5.0, 5.0);
-       
-    glEnd();
-
-    //angle += 0.5;
+    glPopMatrix();
+    //angle += 0.1;
     //cout << angle << endl;
     glutSwapBuffers();
 }
@@ -161,7 +103,7 @@ int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize (500, 500); 
+    glutInitWindowSize (1000, 700); 
     glutInitWindowPosition (100, 100);
     glutCreateWindow ("hello");
     init ();
