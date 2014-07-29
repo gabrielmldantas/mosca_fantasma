@@ -1,6 +1,9 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #endif
+#ifndef __APPLE__
+#include <GL/freeglut.h>
+#endif
 #include <iostream>
 #include <cmath>
 using namespace std;
