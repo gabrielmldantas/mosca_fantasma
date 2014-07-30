@@ -7,6 +7,8 @@
 #endif
 #include "mathutil.h"
 #include <cmath>
+#include <iostream>
+using namespace std;
 
 Manager *currentInstance;
 void displayCallback()
@@ -35,8 +37,9 @@ void keyboardFuncCallback(unsigned char key, int x, int y)
 
 Manager::Manager()
 {
+    _fovy = 60;
 	container = new Cube;
-	camera = new Camera(Vector3(0, 2, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	camera = new Camera(Vector3(0, 1, -0.00759104), Vector3(0, 0, 0), Vector3(0, 0.00986202, -1));
     ::currentInstance = this;
     glutCreateWindow("Mosca Fantasma");
 	registerCallbacks();
@@ -56,8 +59,6 @@ Manager::Manager()
     glDepthFunc(GL_LESS);
     glShadeModel(GL_SMOOTH);
 
-    gluPerspective(45.0, 1000/700, 1.0, 100.0);
-
 	show();
 	glutMainLoop();
 }
@@ -70,6 +71,9 @@ Manager::~Manager()
 
 void Manager::show()
 {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(_fovy, 1000/700, 1.0, 1000.0);
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -99,8 +103,10 @@ void Manager::specialKeys(int key, int x, int y)
             camera->rotateRight(M_PI/180);
             break;
         case GLUT_KEY_UP:
+            camera->rotateUp(M_PI/180);
             break;
         case GLUT_KEY_DOWN:
+            camera->rotateDown(M_PI/180);
             break;
    }
    glutPostRedisplay();
@@ -109,8 +115,9 @@ void Manager::specialKeys(int key, int x, int y)
 void Manager::keyboardFunc(unsigned char key, int x, int y)
 {
 	if (key == 'w')
-		camera->zoomIn(0.1);
+        _fovy -= 1;
 	else if (key == 's')
-		camera->zoomOut(0.1);
+        _fovy += 1;
+    cout  << _fovy << endl;
 	glutPostRedisplay();
 }

@@ -14,6 +14,7 @@ public:
 private:
 	Model *container;
 	Camera *camera;
+    float _fovy;
 	void registerCallbacks();
 };
 

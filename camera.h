@@ -9,16 +9,14 @@ public:
 	~Camera();
 	void rotateLeft(float angle);
 	void rotateRight(float angle);
-	void zoomIn(float amount);
-	void zoomOut(float amount);
+    void rotateUp(float angle);
+    void rotateDown(float angle);
 	void look();
 private:
 	Vector3 _eye;
 	Vector3 _lookAt;
 	Vector3 _up;
-	float _horizontalAngle;
-	void horizontalRotation(float angle);
-	void zoom(float amount);
+	void rotate(float yaw, float pitch);
 };
 
 #endif

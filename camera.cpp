@@ -6,9 +6,11 @@
 #ifndef __APPLE__
 #include <GL/glu.h>
 #endif
+#include <iostream>
+using namespace std;
 
 Camera::Camera(Vector3 eye, Vector3 lookAt, Vector3 up)
-	: _eye(eye), _lookAt(lookAt), _up(up), _horizontalAngle(0)
+	: _eye(eye), _lookAt(lookAt), _up(up)
 {}
 
 Camera::~Camera()
@@ -16,35 +18,50 @@ Camera::~Camera()
 
 void Camera::rotateLeft(float angle)
 {
-	_horizontalAngle -= angle;
-	horizontalRotation(_horizontalAngle);
+	rotate(-angle, 0);
 }
 
 void Camera::rotateRight(float angle)
 {
-	_horizontalAngle += angle;
-	horizontalRotation(_horizontalAngle);
+	rotate(angle, 0);
 }
 
-void Camera::zoomIn(float amount)
+void Camera::rotateUp(float angle)
 {
-	zoom(-amount);
+    rotate(0, angle);
 }
 
-void Camera::zoomOut(float amount)
+void Camera::rotateDown(float angle)
 {
-	zoom(amount);
+    rotate(0, -angle);
 }
 
-void Camera::horizontalRotation(float angle)
+void Camera::rotate(float yaw, float pitch)
 {
-	_eye.setX(0.5 * sin(angle));
-    _eye.setZ(0.5 * cos(angle));
-}
+    Vector3 direction = normalize(_eye - _lookAt);
+    Vector3 right = normalize(direction ^ _up);
+    float *rotationUp = rotationAroundAxis(_up, yaw);
+    float *rotationRight = rotationAroundAxis(right, pitch);
+    
+    Vector3 rotated = ::rotate(rotationUp, direction);
+    rotated = ::rotate(rotationRight, rotated);
+    
+    rotated = rotated + _lookAt;
+    _eye.print();
+    _eye = rotated;
+    _eye.print();
+    
+    float *translationMatrix = translationByAxis(Vector3(0, 1, 1));
+    //_eye = translate(translationMatrix, _eye);
+    
+    right = normalize(normalize(_eye - _lookAt) ^ _up);
+    _up = normalize(right ^ direction);
+    cout << "UP ";
+    _up.print();
 
-void Camera::zoom(float amount)
-{
-	_eye.setY(_eye.y() + amount);
+    delete[] rotationUp;
+    delete[] rotationRight;
+    delete[] translationMatrix;
 }
 
 void Camera::look()

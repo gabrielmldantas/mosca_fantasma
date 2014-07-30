@@ -14,7 +14,7 @@ public:
 	void setZ(float z);
 	float length();
 	float scalar(Vector3 rhs);
-
+    void print();
 private:
 	float _x;
 	float _y;
@@ -26,5 +26,16 @@ Vector3 operator^(Vector3 lhs, Vector3 rhs);
 Vector3 operator+(Vector3 lhs, Vector3 rhs);
 Vector3 operator-(Vector3 lhs, Vector3 rhs);
 bool operator==(Vector3 lhs, Vector3 rhs);
+
+Vector3 normalize(Vector3 vec);
+
+float *rotationX(float angle);
+float *rotationY(float angle);
+float *rotationZ(float angle);
+float *rotationAroundAxis(Vector3 axis, float angle);
+Vector3 rotate(float *rotationMatrix, Vector3 vector);
+
+float *translationByAxis(Vector3 axis);
+Vector3 translate(float *translationMatrix, Vector3 vector);
 
 #endif
