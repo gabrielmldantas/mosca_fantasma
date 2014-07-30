@@ -37,10 +37,10 @@ void keyboardFuncCallback(unsigned char key, int x, int y)
 
 Manager::Manager()
 {
-    _fovy = 60;
-    _eye = Vector3(0, 1, -0.00759104);
-    _lookAt = Vector3(0, 0, 0);
-    _up = Vector3(0, 0.00986202, -1);
+    _fovy = 45;
+    _eye = Vector3(0, 0, -2);
+    _lookAt = Vector3(0, 0, 1);
+    _up = Vector3(0, 1, 0);
 	container = new Cube;
 	camera = new Camera(_eye, _lookAt, _up);
     ::currentInstance = this;
@@ -98,30 +98,12 @@ void Manager::registerCallbacks()
 
 void Manager::specialKeys(int key, int x, int y)
 {
-    switch (key) {
-        case GLUT_KEY_LEFT : 
-            camera->rotateLeft(M_PI/180);
-            break;
-        case GLUT_KEY_RIGHT : 
-            camera->rotateRight(M_PI/180);
-            break;
-        case GLUT_KEY_UP:
-            camera->rotateUp(M_PI/180);
-            break;
-        case GLUT_KEY_DOWN:
-            camera->rotateDown(M_PI/180);
-            break;
-   }
    glutPostRedisplay();
 }
 
 void Manager::keyboardFunc(unsigned char key, int x, int y)
 {
-	if (key == '+')
-        _fovy -= 1;
-	else if (key == '-')
-        _fovy += 1;
-    else if (key == 'r')
+    if (key == 'r')
         camera->updateCoordinates(_eye, _lookAt, _up);
     else if (key == 'w')
         camera->forward(0.01);
