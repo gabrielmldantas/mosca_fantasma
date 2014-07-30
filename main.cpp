@@ -51,7 +51,6 @@ void init (void)
 
 void specialKeys(int key, int x, int y)
 {
-   vec3f c;
    switch (key) {
        case GLUT_KEY_LEFT : 
             angle -= M_PI/180; 
@@ -89,13 +88,12 @@ void display(void)
     glLoadIdentity();
    gluLookAt(pos.x, pos.y, pos.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-
    float vertexes[] = {
         0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, // BOTTOM
         1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, // RIGHT
         1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, // FRONT
         0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, // LEFT
-        0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0 // BOTTOM
+        0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0 // BACK
         
    };
 
