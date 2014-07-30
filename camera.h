@@ -11,7 +11,12 @@ public:
 	void rotateRight(float angle);
     void rotateUp(float angle);
     void rotateDown(float angle);
+    void forward(float amount);
+    void backward(float amount);
+    void panLeft(float amount);
+    float panRight(float amount);
 	void look();
+    void updateCoordinates(Vector3 eye, Vector3 lookAt, Vector3 up);
 private:
 	Vector3 _eye;
 	Vector3 _lookAt;

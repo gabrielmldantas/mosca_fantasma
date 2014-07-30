@@ -38,8 +38,11 @@ void keyboardFuncCallback(unsigned char key, int x, int y)
 Manager::Manager()
 {
     _fovy = 60;
+    _eye = Vector3(0, 1, -0.00759104);
+    _lookAt = Vector3(0, 0, 0);
+    _up = Vector3(0, 0.00986202, -1);
 	container = new Cube;
-	camera = new Camera(Vector3(0, 1, -0.00759104), Vector3(0, 0, 0), Vector3(0, 0.00986202, -1));
+	camera = new Camera(_eye, _lookAt, _up);
     ::currentInstance = this;
     glutCreateWindow("Mosca Fantasma");
 	registerCallbacks();
@@ -73,7 +76,7 @@ void Manager::show()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(_fovy, 1000/700, 1.0, 1000.0);
+    gluPerspective(_fovy, 1000/700, 1.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -114,10 +117,19 @@ void Manager::specialKeys(int key, int x, int y)
 
 void Manager::keyboardFunc(unsigned char key, int x, int y)
 {
-	if (key == 'w')
+	if (key == '+')
         _fovy -= 1;
-	else if (key == 's')
+	else if (key == '-')
         _fovy += 1;
-    cout  << _fovy << endl;
+    else if (key == 'r')
+        camera->updateCoordinates(_eye, _lookAt, _up);
+    else if (key == 'w')
+        camera->forward(0.01);
+    else if (key == 's')
+        camera->backward(0.01);
+    else if (key == 'a')
+        camera->panLeft(0.01);
+    else if (key == 'd')
+        camera->panRight(0.01);
 	glutPostRedisplay();
 }

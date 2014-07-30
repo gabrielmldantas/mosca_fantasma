@@ -47,24 +47,43 @@ void Camera::rotate(float yaw, float pitch)
     rotated = ::rotate(rotationRight, rotated);
     
     rotated = rotated + _lookAt;
-    _eye.print();
     _eye = rotated;
-    _eye.print();
-    
-    float *translationMatrix = translationByAxis(Vector3(0, 1, 1));
-    //_eye = translate(translationMatrix, _eye);
     
     right = normalize(normalize(_eye - _lookAt) ^ _up);
     _up = normalize(right ^ direction);
-    cout << "UP ";
-    _up.print();
 
     delete[] rotationUp;
     delete[] rotationRight;
-    delete[] translationMatrix;
 }
 
 void Camera::look()
 {
 	gluLookAt(_eye.x(), _eye.y(), _eye.z(), _lookAt.x(), _lookAt.y(), _lookAt.z(), _up.x(), _up.y(), _up.z());
+}
+
+void Camera::updateCoordinates(Vector3 eye, Vector3 lookAt, Vector3 up)
+{
+    _eye = eye;
+    _lookAt = lookAt;
+    _up = up;
+}
+
+void Camera::forward(float amount)
+{
+    
+}
+
+void Camera::backward(float amount)
+{
+   _lookAt.setZ(_lookAt.z() - sin(M_PI/180) * amount);
+}
+
+void Camera::panLeft(float amount)
+{
+    _eye.setX(_eye.x() - amount);
+}
+
+float Camera::panRight(float amount)
+{
+    _eye.setX(_eye.x() + amount);
 }

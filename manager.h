@@ -15,6 +15,9 @@ private:
 	Model *container;
 	Camera *camera;
     float _fovy;
+    Vector3 _eye;
+    Vector3 _lookAt;
+    Vector3 _up;
 	void registerCallbacks();
 };
 
