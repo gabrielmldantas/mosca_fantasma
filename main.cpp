@@ -18,24 +18,6 @@ typedef struct {
 
 vec3f pos;
 
-vec3f toPolar(vec3f vec)
-{
-    vec3f p;
-    p.x = sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
-    p.y = atan(p.y / p.x);
-    p.z = atan(sqrt(pow(vec.x, 2) + pow(vec.y, 2))/ vec.z);
-    return p;
-}
-
-vec3f toCartesian(vec3f vec)
-{
-    vec3f c;
-    c.x = vec.x * sin(vec.z) * cos(vec.y);
-    c.y = vec.x * sin(vec.z) * sin(vec.y);
-    c.z = vec.x * cos(vec.z);
-    return c;
-}
-
 void init (void) 
 {
 /*  select clearing (background) color       */
@@ -46,34 +28,50 @@ void init (void)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
+    glEnable (GL_LINE_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
     glShadeModel(GL_SMOOTH);
-    //glOrtho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
-    gluPerspective(45.0, 1000/700, 1.0, 5000.0);
+   // glOrtho(-10.0, 10.0, -10.0, 10.0, -10.0, 10.0);
+    gluPerspective(45.0, 1000/700, 1.0, 100.0);
     vec3f c;
     c.x = 0;
     c.y = 2;
-    c.z = 0.1;
+    c.z = 1;
     pos = c;
     
 }
 
 void specialKeys(int key, int x, int y)
 {
-   angle += M_PI/4; 
    vec3f c;
    switch (key) {
        case GLUT_KEY_LEFT : 
-            pos.x = 2 * sin(angle);
-            pos.z = 2 * cos(angle);
+            angle -= M_PI/180; 
+            pos.x = 0.5 * sin(angle);
+            pos.z = 0.5 * cos(angle);
             break;
        case GLUT_KEY_RIGHT : 
+            angle += M_PI/180; 
+            pos.x = 0.5 * sin(angle);
+            pos.z = 0.5 * cos(angle);
             break;
         case GLUT_KEY_UP:
+            angle += M_PI/180; 
+            pos.y = 2 * sin(angle);
+            pos.z = 2 * cos(angle);
             break;
         case GLUT_KEY_DOWN:
+            angle -= M_PI/180; 
+            pos.y = 2 * sin(angle);
+            pos.z = 2 * cos(angle);
             break;
    }
    glutPostRedisplay();
@@ -90,22 +88,20 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
    gluLookAt(pos.x, pos.y, pos.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    //glRotatef(180, 0.0f, 1.0f, 0.0f); 
-   // glRotatef(angle, 0.0f, 1.0f, 0.0f); 
+
 
    float vertexes[] = {
-        0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1,
-        1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1,
-        0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0,
-        0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0,
-        0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1
+        0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, // BOTTOM
+        1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, // RIGHT
+        1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, // FRONT
+        0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, // LEFT
+        0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0 // BOTTOM
+        
    };
 
    float colors[] = {
-        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
-        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
         97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
+        0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
         0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
         0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255,
         0, 132, 255, 0, 132, 255, 0, 132, 255, 0, 132, 255
@@ -114,18 +110,18 @@ void display(void)
     
 /*  clear all pixels  */
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glPushAttrib(GL_CURRENT_BIT);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
     glColorPointer(3, GL_FLOAT, 0, colors);
     glVertexPointer(3, GL_FLOAT, 0, vertexes);
     glPushMatrix();
     glTranslatef(-0.5, -0.5, -0.5);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 24);
+    glDrawArrays(GL_QUADS, 0, 20);
 
     glPopMatrix();
-    //angle += 0.1;
-    //cout << angle << endl;
+    glPopAttrib();
+
     glutSwapBuffers();
 }
 
