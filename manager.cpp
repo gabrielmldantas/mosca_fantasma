@@ -85,6 +85,13 @@ void Manager::show()
 
     container->draw();
 
+    for (int i = 0; i < 9; i++)
+    {
+        Room *r = new Room(1.0/9, i % 3, i / 3.0);
+        r->draw();
+        delete r;
+    }
+
     glutSwapBuffers();
 }
 
@@ -98,7 +105,11 @@ void Manager::registerCallbacks()
 
 void Manager::specialKeys(int key, int x, int y)
 {
-   glutPostRedisplay();
+    if (key == GLUT_KEY_UP)
+        camera->up(0.01);
+    else if (key == GLUT_KEY_DOWN)
+        camera->down(0.01);
+    glutPostRedisplay();
 }
 
 void Manager::keyboardFunc(unsigned char key, int x, int y)

@@ -17,4 +17,17 @@ public:
 	void draw();
 };
 
+class Room : public Model
+{
+public:
+	Room(float area, int multiplierX, int multiplierZ);
+	~Room();
+	void draw();
+private:
+	float _area;
+	int _multiplierX;
+	int _multiplierZ;
+	float *_vertices;
+};
+
 #endif

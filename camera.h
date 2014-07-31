@@ -10,7 +10,9 @@ public:
     void forward(float amount);
     void backward(float amount);
     void panLeft(float amount);
-    float panRight(float amount);
+    void panRight(float amount);
+    void up(float amount);
+    void down(float amount);
 	void look();
     void updateCoordinates(Vector3 eye, Vector3 lookAt, Vector3 up);
 private:
