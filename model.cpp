@@ -112,11 +112,11 @@ ObjModel::~ObjModel()
 
 void ObjModel::draw()
 {
-    glPushMatrix();
-    glDrawElements(GL_TRIANGLES, _numberOfVertices() / 3, GL_UNSIGNED_INT, _faces);
-    glTranslatef(-0.5, -0.5, -0.5);
+    //glPushMatrix();
+    //glDrawElements(GL_TRIANGLES, _numberOfVertices() / 3, GL_UNSIGNED_INT, _faces);
+    //glTranslatef(-0.5, -0.5, -0.5);
     //glScalef(0.25, 0.25, 0.25);
-    glPopMatrix();
+    //glPopMatrix();
 }
 
 int ObjModel::numberOfVertices()

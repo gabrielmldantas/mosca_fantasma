@@ -73,3 +73,11 @@ void Camera::down(float amount)
         return;
     _eye = _eye + _up * -amount;
 }
+
+void Camera::rotateLeft(float angle)
+{
+    float *rotationMatrix = rotationAroundAxis(_up, angle);
+    Vector3 rotated = rotate(rotationMatrix, _lookAt);
+    _lookAt = rotated;
+    delete[] rotationMatrix;
+}

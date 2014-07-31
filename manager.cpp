@@ -115,6 +115,8 @@ void Manager::specialKeys(int key, int x, int y)
         _camera->up(0.01);
     else if (key == GLUT_KEY_DOWN)
         _camera->down(0.01);
+    else if (key == GLUT_KEY_LEFT)
+        _camera->rotateLeft(2*M_PI/180);
     glutPostRedisplay();
 }
 

@@ -13,6 +13,7 @@ public:
     void panRight(float amount);
     void up(float amount);
     void down(float amount);
+    void rotateLeft(float angle);
 	void look();
     void updateCoordinates(Vector3 eye, Vector3 lookAt, Vector3 up);
 private:
