@@ -38,17 +38,12 @@ void keyboardFuncCallback(unsigned char key, int x, int y)
 
 Manager::Manager(string input)
 {
-    if (input.length() > 0)
-    {
-        RoomLoader loader;
-        roomSpec = loader.load(input);
-    }
     _fovy = 45;
     _eye = Vector3(0, 0, -2);
     _lookAt = Vector3(0, 0, 1);
     _up = Vector3(0, 1, 0);
-	container = new Cube;
-	camera = new Camera(_eye, _lookAt, _up);
+	
+	_camera = new Camera(_eye, _lookAt, _up);
     ::currentInstance = this;
     glutCreateWindow("Mosca Fantasma");
 	registerCallbacks();
@@ -68,15 +63,21 @@ Manager::Manager(string input)
     glDepthFunc(GL_LESS);
     glShadeModel(GL_SMOOTH);
 
+    loadRooms(input);
+    
 	show();
 	glutMainLoop();
 }
 
 Manager::~Manager()
 {
-	delete container;
-	delete camera;
-    delete roomSpec;
+	delete _floor;
+	delete _camera;
+    delete _roomSpec;
+    for (int i = 0; i < _rooms.size(); i++)
+    {
+        delete _rooms[i];
+    }
 }
 
 void Manager::show()
@@ -88,18 +89,15 @@ void Manager::show()
     glLoadIdentity();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    camera->look();
+    _camera->look();
 
-    container->draw();
-
-    for (int i = 0; i < roomSpec->numberOfRooms(); i++)
+    _floor->draw();
+    
+    for (int i = 0; i < _rooms.size(); i++)
     {
-        float area = 1.0/roomSpec->numberOfRooms();
-        Room *r = new Room(area, i % ((int) round(sqrt(area))), i / round(sqrt(area)));
-        r->draw();
-        delete r;
+        _rooms[i]->draw();
     }
-
+    
     glutSwapBuffers();
 }
 
@@ -114,23 +112,41 @@ void Manager::registerCallbacks()
 void Manager::specialKeys(int key, int x, int y)
 {
     if (key == GLUT_KEY_UP)
-        camera->up(0.01);
+        _camera->up(0.01);
     else if (key == GLUT_KEY_DOWN)
-        camera->down(0.01);
+        _camera->down(0.01);
     glutPostRedisplay();
 }
 
 void Manager::keyboardFunc(unsigned char key, int x, int y)
 {
     if (key == 'r')
-        camera->updateCoordinates(_eye, _lookAt, _up);
+        _camera->updateCoordinates(_eye, _lookAt, _up);
     else if (key == 'w')
-        camera->forward(0.01);
+        _camera->forward(0.01);
     else if (key == 's')
-        camera->backward(0.01);
+        _camera->backward(0.01);
     else if (key == 'a')
-        camera->panLeft(0.01);
+        _camera->panLeft(0.01);
     else if (key == 'd')
-        camera->panRight(0.01);
+        _camera->panRight(0.01);
 	glutPostRedisplay();
+}
+
+void Manager::loadRooms(string input)
+{
+    _floor = new Floor;
+    RoomLoader loader;
+    _roomSpec = loader.load(input);
+    for (int i = 0; i < _roomSpec->numberOfRooms(); i++)
+    {
+        float area = 1.0/_roomSpec->numberOfRooms();
+        Room *r = new Room(area, i % ((int) round(sqrt(area))), i / round(sqrt(area)));
+        for (int j = 0; j < _roomSpec->numberOfObjectsOfFirstTypeInRoom(i+1); j++)
+        {
+            Suzanne *suzanne = new Suzanne;
+            r->addModel(suzanne);
+        }
+        _rooms.push_back(r);
+    }
 }

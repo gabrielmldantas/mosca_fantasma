@@ -38,6 +38,8 @@ void Camera::forward(float amount)
 
 void Camera::backward(float amount)
 {
+    if (_eye.z() < -2)
+        return;
     _eye = _eye + _lookAt * -amount;
     _lookAt = _lookAt + _lookAt * -amount;
 }
@@ -70,5 +72,4 @@ void Camera::down(float amount)
     if (_eye.y() < -0.3)
         return;
     _eye = _eye + _up * -amount;
-    _eye.print();
 }

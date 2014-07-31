@@ -8,9 +8,10 @@
 #endif
 #include <cmath>
 #include <iostream>
+#include "fileutil.h"
 using namespace std;
 
-void Cube::draw()
+void Floor::draw()
 {
 	float vertices[] = {
         0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0 // BOTTOM
@@ -18,7 +19,7 @@ void Cube::draw()
     };
 
     float colors[] = {
-        97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97
+        97, 97, 97, 97, 97, 97, 97, 97, 97
     };
     
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -29,6 +30,8 @@ void Cube::draw()
     glTranslatef(-0.5, -0.5, -0.5);
     glDrawArrays(GL_QUADS, 0, 4);
     glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 Room::Room(float area, int multiplierX, int multiplierZ)
@@ -81,5 +84,56 @@ void Room::draw()
     glTranslatef(sqrt(_area) * _multiplierX, 0, sqrt(_area) * _multiplierZ);
     glTranslatef(0.05 * _multiplierX, 0, 0.05 * _multiplierZ);
     glDrawArrays(GL_QUADS, 0, 16);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    
+    for (int i = 0; i < _modelsInRoom.size(); i++)
+    {
+        _modelsInRoom[i]->draw();
+    }
+    
     glPopMatrix();
+}
+
+void Room::addModel(Model *model)
+{
+    _modelsInRoom.push_back(model);
+}
+
+ObjModel::ObjModel(float *vertices, int *faces, int numberOfVertices)
+    : _vertices(vertices), _faces(faces), _numberOfVertices(numberOfVertices)
+{}
+
+ObjModel::~ObjModel()
+{
+    delete[] _vertices;
+    delete[] _faces;
+}
+
+void ObjModel::draw()
+{
+    glPushMatrix();
+    glDrawElements(GL_TRIANGLES, _numberOfVertices() / 3, GL_UNSIGNED_INT, _faces);
+    glTranslatef(-0.5, -0.5, -0.5);
+    //glScalef(0.25, 0.25, 0.25);
+    glPopMatrix();
+}
+
+int ObjModel::numberOfVertices()
+{
+    return _numberOfVertices;
+}
+
+Suzanne::Suzanne()
+{
+    ObjLoader loader;
+    string s("suzanne.obj");
+    _model = loader.load(s);
+}
+
+Suzanne::~Suzanne() {}
+
+void Suzanne::draw()
+{
+    _model->draw();
 }

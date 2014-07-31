@@ -97,7 +97,56 @@ RoomSpec *RoomLoader::load(string filePath)
 		spec->setAverageObjectsOfSecondTypeInRoom(i + 1, stoi(elements[5]));
 		spec->setDeviationObjectsOfSecondTypeInRoom(i + 1, stoi(elements[6]));
 	}
-
 	file.close();
 	return spec;
+}
+
+ObjLoader::ObjLoader()
+{}
+
+ObjLoader::~ObjLoader()
+{}
+
+ObjModel *ObjLoader::load(string filePath)
+{
+    filebuf file;
+    file.open(filePath, ios::in);
+    istream is(&file);
+    string line;
+    vector<float> vertices;
+    vector<int> faces;
+    while (getline(is, line))
+    {
+        if (line.substr(0, 2) == "v ")
+        {
+            istringstream ss(line.substr(2));
+            float v;
+            for (int i = 0; i < 3; i++)
+            {
+                ss >> v;
+                vertices.push_back(v);
+            }
+            //vertices.push_back(1.0);
+        }
+        else if (line.substr(0, 2) == "f ")
+        {
+            istringstream ss(line.substr(2));
+            int f;
+            for (int i = 0; i < 3; i++)
+            {
+                ss >> f;
+                faces.push_back(f);
+            }
+        }
+    }
+    
+    float *vertices_array = new float[vertices.size()];
+    int *faces_array = new int[faces.size()];
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        vertices_array[i] = vertices[i];
+        faces_array[i] = faces[i];
+    }
+    ObjModel *model = new ObjModel(vertices_array, faces_array, vertices.size());
+    return model;
 }

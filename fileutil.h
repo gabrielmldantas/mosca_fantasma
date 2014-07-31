@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "model.h"
 
 class RoomSpec
 {
@@ -30,5 +31,13 @@ public:
 };
 
 std::vector<std::string> split(std::string str, char delimiter);
+
+class ObjLoader
+{
+public:
+    ObjLoader();
+    ~ObjLoader();
+    ObjModel *load(std::string filePath);
+};
 
 #endif
