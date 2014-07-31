@@ -15,9 +15,13 @@ int main(int argc, char *argv[])
     glutInitWindowSize (1000, 700); 
     glutInitWindowPosition (100, 100);
 
-    string input;
-    if (argc > 1)
-    	input = string(argv[1]);
-    Manager m(input);
+    if (argc < 2)
+    {
+        cout << "Informe o arquivo contendo a descrição das salas" << endl;
+        return 1;
+    }
+    
+    string s(argv[1]);
+    Manager m(s);
     return 0;
 }

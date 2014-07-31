@@ -30,6 +30,8 @@ void Camera::updateCoordinates(Vector3 eye, Vector3 lookAt, Vector3 up)
 
 void Camera::forward(float amount)
 {
+    if (_eye.z() > 0.60)
+        return;
     _eye = _eye + _lookAt * amount;
     _lookAt = _lookAt + _lookAt * amount;
 }
@@ -42,22 +44,31 @@ void Camera::backward(float amount)
 
 void Camera::panLeft(float amount)
 {
+    if (_eye.x() > 0.35)
+        return;
     Vector3 right = normalize((_eye - _lookAt) ^ _up);
     _eye = _eye + right * amount;
 }
 
 void Camera::panRight(float amount)
 {
+    if (_eye.x() < -0.35)
+        return;
     Vector3 right = normalize((_eye - _lookAt) ^ _up);
-    _eye = _eye + right * -amount;   
+    _eye = _eye + right * -amount;
 }
 
 void Camera::up(float amount)
 {
+    if (_eye.y() > 0.3)
+        return;
     _eye = _eye + _up * amount;
 }
 
 void Camera::down(float amount)
 {
+    if (_eye.y() < -0.3)
+        return;
     _eye = _eye + _up * -amount;
+    _eye.print();
 }
