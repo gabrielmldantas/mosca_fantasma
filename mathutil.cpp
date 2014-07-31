@@ -176,7 +176,7 @@ float *translationByAxis(Vector3 axis)
     matrix[12] = 0;
     matrix[13] = 0;
     matrix[14] = 0;
-    matrix[15] = 1;
+    matrix[15] = 1; 
     return matrix;
 }
 Vector3 translate(float *translationMatrix, Vector3 vector)

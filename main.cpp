@@ -5,6 +5,8 @@
 #include <GL/freeglut.h>
 #endif
 #include "manager.h"
+#include <iostream>
+using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +14,10 @@ int main(int argc, char *argv[])
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize (1000, 700); 
     glutInitWindowPosition (100, 100);
-    Manager m;
+
+    string input;
+    if (argc > 1)
+    	input = string(argv[1]);
+    Manager m(input);
     return 0;
 }

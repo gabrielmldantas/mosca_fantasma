@@ -8,6 +8,7 @@
 #include "mathutil.h"
 #include <cmath>
 #include <iostream>
+#include "fileutil.h"
 using namespace std;
 
 Manager *currentInstance;
@@ -35,8 +36,13 @@ void keyboardFuncCallback(unsigned char key, int x, int y)
 	}
 }
 
-Manager::Manager()
+Manager::Manager(string input)
 {
+    if (input.length() > 0)
+    {
+        RoomLoader loader;
+        roomSpec = loader.load(input);
+    }
     _fovy = 45;
     _eye = Vector3(0, 0, -2);
     _lookAt = Vector3(0, 0, 1);
@@ -70,6 +76,7 @@ Manager::~Manager()
 {
 	delete container;
 	delete camera;
+    delete roomSpec;
 }
 
 void Manager::show()
@@ -85,9 +92,10 @@ void Manager::show()
 
     container->draw();
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < roomSpec->numberOfRooms(); i++)
     {
-        Room *r = new Room(1.0/9, i % 3, i / 3.0);
+        float area = 1.0/roomSpec->numberOfRooms();
+        Room *r = new Room(area, i % ((int) round(sqrt(area))), i / round(sqrt(area)));
         r->draw();
         delete r;
     }
