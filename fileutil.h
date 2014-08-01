@@ -40,4 +40,13 @@ public:
     ObjModel *load(std::string filePath);
 };
 
+/*
+class JpegReader
+{
+public:
+	JpegReader();
+	~JpegReader();
+	int ***load(std::string filePath, int *imageWidth, int *imageHeight);
+};
+*/
 #endif

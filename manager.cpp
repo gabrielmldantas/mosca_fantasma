@@ -63,6 +63,9 @@ Manager::Manager(string input)
     glDepthFunc(GL_LESS);
     glShadeModel(GL_SMOOTH);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(_fovy, 800/600, 1.0, 100.0);
     loadRooms(input);
     
 	show();
@@ -82,9 +85,6 @@ Manager::~Manager()
 
 void Manager::show()
 {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(_fovy, 1000/700, 1.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -104,7 +104,6 @@ void Manager::show()
 void Manager::registerCallbacks()
 {
 	glutDisplayFunc(::displayCallback); 
-    glutIdleFunc(::displayCallback);
     glutKeyboardFunc(::keyboardFuncCallback);
     glutSpecialFunc(::specialKeysCallback);
 }
@@ -117,6 +116,8 @@ void Manager::specialKeys(int key, int x, int y)
         _camera->down(0.01);
     else if (key == GLUT_KEY_LEFT)
         _camera->rotateLeft(2*M_PI/180);
+    else if (key == GLUT_KEY_RIGHT)
+        _camera->rotateRight(2*M_PI/180);
     glutPostRedisplay();
 }
 
@@ -137,18 +138,24 @@ void Manager::keyboardFunc(unsigned char key, int x, int y)
 
 void Manager::loadRooms(string input)
 {
-    _floor = new Floor;
     RoomLoader loader;
     _roomSpec = loader.load(input);
+    float area = 0.25;
+    float totalArea = _roomSpec->numberOfRooms() * (sqrt(area + 0.05));
+    float lateralFloor = sqrt(totalArea);
     for (int i = 0; i < _roomSpec->numberOfRooms(); i++)
     {
-        float area = 1.0/_roomSpec->numberOfRooms();
-        Room *r = new Room(area, i % ((int) round(sqrt(area))), i / round(sqrt(area)));
+        Room *r = new Room(area, lateralFloor, i % 2, i / 2);
         for (int j = 0; j < _roomSpec->numberOfObjectsOfFirstTypeInRoom(i+1); j++)
         {
-            Suzanne *suzanne = new Suzanne;
-            r->addModel(suzanne);
+            //Suzanne *suzanne = new Suzanne;
+            r->addModel(new ObjModel(1));
+        }
+        for (int j = 0; j < _roomSpec->numberOfObjectsOfSecondTypeInRoom(i+1); j++)
+        {
+            r->addModel(new ObjModel(2));
         }
         _rooms.push_back(r);
     }
+    _floor = new Floor(totalArea);
 }
